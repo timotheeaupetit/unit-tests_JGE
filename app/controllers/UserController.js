@@ -1,8 +1,8 @@
 const _ = require('underscore');
 
 class UserController {
-    constructor(registerService) {
-        this._registerService = registerService;
+    constructor(userService) {
+        this._userService = userService;
     }
 
     listUsers(req, res) {
@@ -18,7 +18,7 @@ class UserController {
     }
 
     saveUser(req, res) {
-        if(underscore.isEmpty(req.body)
+        if (underscore.isEmpty(req.body)
             || underscore.isEmpty(req.body.email)
             || underscore.isEmpty(req.body.licence)
             || underscore.isEmpty(req.body.password)
@@ -28,6 +28,33 @@ class UserController {
             });
             return;
         }
+    }
+
+    delete(req, res) {
+        res.render('Users');
+    }
+
+    postDelete(req, res) {
+        this._userService.delete(req.body.id).then(
+            result => {
+                let message = 'User deleted.';
+
+                if(result === 'unknown_user') {
+                  message = 'Cet utilisateur n\'existe pas.';
+									console.log(message);
+                }
+								console.log(message);
+								
+                res.render('Users', {
+                    message: message
+                });
+            }
+        ).catch(e => {
+            res.render('Users', {
+                message: 'Erreur système'
+            });
+        });
+
     }
 }
 module.exports = UserController;

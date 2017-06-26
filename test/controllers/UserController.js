@@ -3,10 +3,10 @@ const UserController = require('../../app/controllers/UserController');
 
 describe("UserController", () => {
     describe("#constructor", () => {
-        it("Verification de la presence de la propriete 'registerService'", () => {
+        it("Verification de la presence de la propriete 'userService'", () => {
             const userCtrl = new UserController(true);
 
-            expect(userCtrl._registerService).toBe(true);
+            expect(userCtrl._userService).toBe(true);
         });
     });
 
@@ -72,6 +72,74 @@ describe("UserController", () => {
                 }
             };
             userCtrl.saveUser(req, res);
+        });
+    });
+
+    describe("#delete", () => {
+        it("Test de retour : Users", () => {
+		        const user = new UserController();
+		        const req = { };
+		        const res = {
+		            render: view => {
+		                expect(view).toBe('Users');
+		            }
+		        };
+		        user.delete(req, res);
+       	});
+    });
+
+    describe("#postDelete", () => {
+        it("Test utilisateur existant", () => {
+        		const userService = {
+                delete: () => {
+                    return new Promise((resolve, reject) => {
+                        resolve('unknown_user');
+                    });
+                }
+            };
+
+            const userCtrl = new UserController(userService);
+
+		        const req = {
+                body: {
+                    id: 0,
+                }
+            };
+
+		        const res = {
+                render: (view, data) => {
+                    expect(view).toBe('Users');
+                    expect(data.message).toBe("Cet utilisateur n\'existe pas.");
+                }
+            };
+            userCtrl.postDelete(req, res);
+        });
+
+        it("Test la défaillance du système", () => {
+            const userService = {
+                delete: () => {
+                    return new Promise((resolve, reject) => {
+                        reject('error');
+                    });
+                }
+            };
+
+            const userCtrl = new UserController(userService);
+
+            const req = {
+                body: {
+                    id: 0,
+                }
+            };
+
+            const res = {
+                render: (view, data) => {
+                    expect(view).toBe('Users');
+                    expect(data.message).toBe("Erreur système");
+                }
+            };
+
+            userCtrl.postDelete(req, res);
         });
     });
 });
