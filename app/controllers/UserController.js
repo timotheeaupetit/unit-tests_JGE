@@ -18,13 +18,21 @@ class UserController {
     }
 
     saveUser(req, res) {
-        if (underscore.isEmpty(req.body)
-            || underscore.isEmpty(req.body.email)
-            || underscore.isEmpty(req.body.licence)
-            || underscore.isEmpty(req.body.password)
-            || underscore.isEmpty(req.body.confirm)) {
+        if (_.isEmpty(req.body)
+            || _.isEmpty(req.body.email)
+            || _.isEmpty(req.body.licence)
+            || _.isEmpty(req.body.password)
+            || _.isEmpty(req.body.confirm)) {
+
             res.render('./admin/users/new', {
                 message: 'Tous les champs doivent être complétés.'
+            });
+            return;
+        }
+
+        if (req.body.password !== req.body.confirm) {
+            res.render('./admin/users/new', {
+                message: 'La confirmation est différente du mot de passe.'
             });
             return;
         }

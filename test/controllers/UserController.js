@@ -66,9 +66,28 @@ describe("UserController", () => {
             };
             const res = {
                 render: (view, data) => {
-                    console.log('coucou');
                     expect(view).toBe('./admin/users/new');
                     expect(data.message).toBe('Tous les champs doivent être complétés.')
+                }
+            };
+            userCtrl.saveUser(req, res);
+        });
+
+        it("Test si le mdp et la confirmation sont ok", () => {
+            const userCtrl = new UserController();
+
+            const req = {
+                body: {
+                    email: 'jeanclaude.vandamme@domain.tld',
+                    licence: '12345P',
+                    password: '123456789',
+                    confirm: 'aaabbbcccddd'
+                }
+            };
+            const res = {
+                render: (view, data) => {
+                    expect(view).toBe('./admin/users/new');
+                    expect(data.message).toBe('La confirmation est différente du mot de passe.');
                 }
             };
             userCtrl.saveUser(req, res);
