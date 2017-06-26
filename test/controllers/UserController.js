@@ -11,14 +11,24 @@ describe("UserController", () => {
     });
 
     describe("#listUsers", () => {
-        it("Test route to Users list ./admin/users", () => {
-            const userCtrl = new UserController();
-            const req = {};
-            const res = {
-                render: view => {
-                    expect(view).toBe("./admin/users");
+        it("Test: user list is empty", () => {
+            const userService = {
+                list: () => {
+                    return new Promise(resolve => {
+                        resolve([]); // empty list
+                    });
                 }
             };
+            const userCtrl = new UserController(userService);
+
+            const req = {};
+            const res = {
+                render: (view, data) => {
+                    expect(view).toBe("admin/users");
+                    expect(data.list.length).toBe(0);
+                }
+            };
+
             userCtrl.listUsers(req, res);
         });
     });
