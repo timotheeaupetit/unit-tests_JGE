@@ -1,15 +1,35 @@
 const _ = require('underscore');
 
 class UserController {
-    constructor(registerService) {
-        this._registerService = registerService;
+    constructor(userService) {
+        this._userService = userService;
     }
 
-    modifyUser(req, res) {
-        if (!this._fName
-            ||!this.lName) {
-            "A user must have a firstname and a lastname"
-        }
+    delete(req, res) {
+        res.render('Users');
+    }
+
+    postDelete(req, res) {
+        this._userService.delete(req.body.id).then(
+            result => {
+                let message = 'User deleted.';
+                
+
+                if(result === 'unknown_user') {
+                  message = 'Cet utilisateur n\'existe pas.';
+									console.log(message);
+                }
+								console.log(message);
+								
+                res.render('Users', {
+                    message: message
+                });
+            }
+        ).catch(e => {
+            res.render('Users', {
+                message: 'Erreur système'
+            });
+        });
     }
 }
 
