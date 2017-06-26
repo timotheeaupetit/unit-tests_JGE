@@ -10,6 +10,19 @@ describe("UserController", () => {
         });
     });
 
+    describe("#addUser", () => {
+        it("Test de routing vers ./admin/users/new", () => {
+            const userCtrl = new UserController();
+            const req = {};
+            const res = {
+                render: view => {
+                    expect(view).toBe('./admin/users/new');
+                }
+            };
+            userCtrl.addUser(req, res);
+        });
+    });
+
     describe("#modifyUser", () => {
         it("Test de retour : user/user/{id}", () => {
             const userCtrl = new UserController();
@@ -22,13 +35,30 @@ describe("UserController", () => {
                 }
             };
 
-            userCtrl.register(req, res);
+            userCtrl.modifyUser(req, res);
         });
     });
 
     describe("#saveUser", () => {
-        // un champ obligatoire est vide
-        // tous les champs sont remplis correctement
-        // il n'y a aucun changement
+        it("Renvoie un message d'erreur si tous les champs ne sont pas complétés", () => {
+            const userCtrl = new UserController();
+
+            const req = {
+                body: {
+                    // email: 'john.doe@domain.tld',
+                    // licence: "12345P",
+                    // password: '1234567890',
+                    // confirm: '1234567890'
+                }
+            };
+            const res = {
+                render: (view, data) => {
+                    console.log('coucou');
+                    expect(view).toBe('./admin/users/new');
+                    expect(data.message).toBe('Tous les champs doivent être complétés.')
+                }
+            };
+            userCtrl.saveUser(req, res);
+        });
     });
 });
