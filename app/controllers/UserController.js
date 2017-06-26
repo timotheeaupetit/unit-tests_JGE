@@ -6,7 +6,19 @@ class UserController {
     }
 
     listUsers(req, res) {
-        res.render("./admin/users");
+        this._userService.list().then(
+            result => {
+                console.log(result);
+
+                res.render('admin/users', {
+                    list: result
+                });
+            }
+        ).catch(e => {
+            res.render('admin/users', {
+                message: 'System error'
+            });
+        });
     }
 
     modifyUser(req, res) {
@@ -23,7 +35,6 @@ class UserController {
             || _.isEmpty(req.body.licence)
             || _.isEmpty(req.body.password)
             || _.isEmpty(req.body.confirm)) {
-
             res.render('./admin/users/new', {
                 message: 'Tous les champs doivent être complétés.'
             });
