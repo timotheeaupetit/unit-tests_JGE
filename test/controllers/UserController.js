@@ -37,14 +37,14 @@ describe("UserController", () => {
     });
 
     describe("#modifyUser", () => {
-        it("Test de retour : user/user/{id}", () => {
+        it("Test de retour : ./admin/users/{id}/modify", () => {
             const userCtrl = new UserController();
 
             const req = { };
 
             const res = {
                 render: view => {
-                    expect(view).toBe('user/user/2');
+                    expect(view).toBe('./admin/users/{id}/modify');
                 }
             };
 

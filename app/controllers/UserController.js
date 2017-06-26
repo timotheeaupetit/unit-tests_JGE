@@ -10,7 +10,7 @@ class UserController {
     }
 
     modifyUser(req, res) {
-        res.render("user/user/2");
+        res.render("./admin/users/{id}/modify");
     }
 
     addUser(req, res) {
