@@ -10,6 +10,19 @@ describe("UserController", () => {
         });
     });
 
+    describe("#listUsers", () => {
+        it("Test route to Users list ./admin/users", () => {
+            const userCtrl = new UserController();
+            const req = {};
+            const res = {
+                render: view => {
+                    expect(view).toBe("./admin/users");
+                }
+            };
+            userCtrl.listUsers(req, res);
+        });
+    });
+
     describe("#addUser", () => {
         it("Test de routing vers ./admin/users/new", () => {
             const userCtrl = new UserController();

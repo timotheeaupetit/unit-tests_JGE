@@ -5,6 +5,10 @@ class UserController {
         this._registerService = registerService;
     }
 
+    listUsers(req, res) {
+        res.render("./admin/users");
+    }
+
     modifyUser(req, res) {
         res.render("user/user/2");
     }
