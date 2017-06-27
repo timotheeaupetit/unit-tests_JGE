@@ -11,6 +11,7 @@ describe("UserController", () => {
     });
 
     describe("#listUsers", () => {
+
         it("Test: user list is empty", () => {
             const userService = {
                 list: () => {
@@ -27,8 +28,7 @@ describe("UserController", () => {
                     expect(view).toBe("admin/users");
                     expect(data.list.length).toBe(0);
                 }
-            };
-
+            }
             userCtrl.listUsers(req, res);
         });
     });
@@ -139,22 +139,9 @@ describe("UserController", () => {
         })
     });
 
-    describe("#delete", () => {
-        it("Test de retour : Users", () => {
-		        const user = new UserController();
-		        const req = { };
-		        const res = {
-		            render: view => {
-		                expect(view).toBe('Users');
-		            }
-		        };
-		        user.delete(req, res);
-       	});
-    });
-
     describe("#postDelete", () => {
         it("Test utilisateur existant", () => {
-        		const userService = {
+        	const userService = {
                 delete: () => {
                     return new Promise((resolve, reject) => {
                         resolve('unknown_user');
@@ -164,16 +151,34 @@ describe("UserController", () => {
 
             const userCtrl = new UserController(userService);
 
-		        const req = {
+		    const req = {
                 body: {
-                    id: 0,
+                    id: '0',
                 }
             };
 
-		        const res = {
+		    const res = {
                 render: (view, data) => {
-                    expect(view).toBe('Users');
-                    expect(data.message).toBe("Cet utilisateur n\'existe pas.");
+                    expect(view).toBe('admin/users');
+                    expect(data.message).toBe("Unknown User");
+                }
+            };
+            userCtrl.postDelete(req, res);
+        });
+
+        it("Test Requete vide", () => {
+            const userService = { };
+
+            const userCtrl = new UserController(userService);
+
+            const req = {
+                body: { id : null}
+            };
+
+            const res = {
+                render: (view, data) => {
+                    expect(view).toBe('admin/users');
+                    expect(data.message).toBe("Empty Request");
                 }
             };
             userCtrl.postDelete(req, res);
@@ -192,13 +197,13 @@ describe("UserController", () => {
 
             const req = {
                 body: {
-                    id: 0,
+                    id: '1',
                 }
             };
 
             const res = {
                 render: (view, data) => {
-                    expect(view).toBe('Users');
+                    expect(view).toBe('admin/users');
                     expect(data.message).toBe("Erreur système");
                 }
             };
