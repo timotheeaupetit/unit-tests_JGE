@@ -38,7 +38,6 @@ class UserController {
             res.render('admin/users/new', {
                 message: 'Tous les champs doivent etre completes.'
             });
-            return;
         }
 
         this._userService.add(req.body).then(
@@ -60,31 +59,29 @@ class UserController {
         });
     }
 
-    delete(req, res) {
-        res.render('Users');
-    }
-
     postDelete(req, res) {
-        this._userService.delete(req.body.id).then(
-            result => {
-                let message = 'User deleted.';
+        if(_.isEmpty(req.body.id) ) {
+            res.render('admin/users', {
+               message: "Empty Request"
+            });
+            return;
+        }
 
-                if(result === 'unknown_user') {
-                  message = 'Cet utilisateur n\'existe pas.';
-									console.log(message);
-                }
-								console.log(message);
-								
-                res.render('Users', {
-                    message: message
-                });
+        this._userService.delete(req.body.id).then(result => {
+            let message = 'User Deleted.';
+
+            if(result === 'unknown_user') {
+              message = 'Unknown User';
             }
-        ).catch(e => {
-            res.render('Users', {
+
+            res.render('admin/users', {
+                message: message
+            });
+        }).catch(e => {
+            res.render('admin/users', {
                 message: 'Erreur système'
             });
         });
-
     }
 }
 module.exports = UserController;
