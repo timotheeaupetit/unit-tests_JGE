@@ -22,31 +22,42 @@ class UserController {
     }
 
     modifyUser(req, res) {
-        res.render("./admin/users/{id}/modify");
+        res.render("admin/users/{id}/modify");
     }
 
     addUser(req, res) {
-        res.render('./admin/users/new');
+        res.render('admin/users/new');
     }
 
     saveUser(req, res) {
         if (_.isEmpty(req.body)
+            || _.isEmpty(req.body.firstname)
+            || _.isEmpty(req.body.lastname)
             || _.isEmpty(req.body.email)
-            || _.isEmpty(req.body.licence)
-            || _.isEmpty(req.body.password)
-            || _.isEmpty(req.body.confirm)) {
-            res.render('./admin/users/new', {
-                message: 'Tous les champs doivent être complétés.'
+            || _.isEmpty(req.body.login)) {
+            res.render('admin/users/new', {
+                message: 'Tous les champs doivent etre completes.'
             });
             return;
         }
 
-        if (req.body.password !== req.body.confirm) {
-            res.render('./admin/users/new', {
-                message: 'La confirmation est différente du mot de passe.'
-            });
-            return;
-        }
+        this._userService.add(req.body).then(
+            result => {
+                let message = "Utilisateur enregistre avec succes";
+
+                if (result === 'login already exists') {
+                    message = "Ce login existe deja";
+                }
+
+                res.render("admin/users/new", {
+                    message: message
+                });
+            }
+        ).catch(e => {
+            res.render('admin/users/new', {
+                message: 'Erreur systeme'
+            })
+        });
     }
 
     delete(req, res) {
