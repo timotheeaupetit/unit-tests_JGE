@@ -38,6 +38,7 @@ class UserController {
             res.render('admin/users/new', {
                 message: 'Tous les champs doivent etre completes.'
             });
+            return
         }
 
         this._userService.add(req.body).then(
