@@ -34,12 +34,12 @@ describe("UserController", () => {
     });
 
     describe("#addUser", () => {
-        it("Test de routing vers ./admin/users/new", () => {
+        it("Test de routing vers admin/users/new", () => {
             const userCtrl = new UserController();
             const req = {};
             const res = {
                 render: view => {
-                    expect(view).toBe('./admin/users/new');
+                    expect(view).toBe('admin/users/new');
                 }
             };
             userCtrl.addUser(req, res);
@@ -47,14 +47,14 @@ describe("UserController", () => {
     });
 
     describe("#modifyUser", () => {
-        it("Test de retour : ./admin/users/{id}/modify", () => {
+        it("Test de retour : admin/users/{id}/modify", () => {
             const userCtrl = new UserController();
 
             const req = { };
 
             const res = {
                 render: view => {
-                    expect(view).toBe('./admin/users/{id}/modify');
+                    expect(view).toBe('admin/users/{id}/modify');
                 }
             };
 
@@ -63,45 +63,80 @@ describe("UserController", () => {
     });
 
     describe("#saveUser", () => {
-        it("Renvoie un message d'erreur si tous les champs ne sont pas complétés", () => {
+        it("Test : tous les champs sont vides", () => {
             const userCtrl = new UserController();
 
             const req = {
-                body: {
-                    // email: 'john.doe@domain.tld',
-                    // licence: "12345P",
-                    // password: '1234567890',
-                    // confirm: '1234567890'
-                }
+                body: {}
             };
             const res = {
                 render: (view, data) => {
-                    expect(view).toBe('./admin/users/new');
-                    expect(data.message).toBe('Tous les champs doivent être complétés.')
+                    expect(view).toBe('admin/users/new');
+                    expect(data.message).toBe('Tous les champs doivent etre completes.')
                 }
             };
             userCtrl.saveUser(req, res);
         });
 
-        it("Test si le mdp et la confirmation sont ok", () => {
-            const userCtrl = new UserController();
+        it("Test : defaillance du systeme", () => {
+            const userService = {
+                add: () => {
+                    return new Promise((resolve, reject) => {
+                        reject('persist_failed');
+                    });
+                }
+            };
+
+            const userCtrl = new UserController(userService);
 
             const req = {
                 body: {
-                    email: 'jeanclaude.vandamme@domain.tld',
-                    licence: '12345P',
-                    password: '123456789',
-                    confirm: 'aaabbbcccddd'
+                    firstname: "John",
+                    lastname: "Doe",
+                    email: "john.doe@domain.tld",
+                    login: "toto"
                 }
             };
+
             const res = {
                 render: (view, data) => {
-                    expect(view).toBe('./admin/users/new');
-                    expect(data.message).toBe('La confirmation est différente du mot de passe.');
+                    expect(view).toBe('admin/users/new');
+                    expect(data.message).toBe("Erreur systeme");
                 }
             };
+
             userCtrl.saveUser(req, res);
         });
+
+        it("Test : login en doublon", () => {
+            const userService = {
+                add: () => {
+                    return new Promise((resolve, reject) => {
+                        resolve('login already exists');
+                    });
+                }
+            };
+
+            const userCtrl = new UserController(userService);
+
+            const req = {
+                body: {
+                    firstname: "John",
+                    lastname: "Doe",
+                    email: "john.doe@domain.tld",
+                    login: "toto"
+                }
+            };
+
+            const res = {
+                render: (view, data) => {
+                    expect(view).toBe('admin/users/new');
+                    expect(data.message).toBe("Ce login existe deja");
+                }
+            };
+
+            userCtrl.saveUser(req, res);
+        })
     });
 
     describe("#delete", () => {
